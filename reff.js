@@ -158,7 +158,16 @@ async function main() {
         }
       }
       
-      let selectedProxy = ;
+   let selectedProxy;
+   if (proxyMode === 'Rotating') {
+     selectedProxy = proxyList[0];
+   } else {
+     selectedProxy = proxyList.shift();
+     if (!selectedProxy) {
+       console.error(chalk.red("Tidak ada proxy yang tersisa untuk mode static."));
+       process.exit(1);
+     }
+   }
       console.log("Menggunakan proxy: ", selectedProxy);
       selectedProxy = selectedProxy.match(/^https?:\/\//)
         ? selectedProxy
