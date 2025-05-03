@@ -157,15 +157,14 @@ async function main() {
           process.exit(1);
         }
       }
-       let selectedProxy = /* … */;
- console.log("Menggunakan proxy: ", selectedProxy);
--// ——— LOGIKA TAMBAHAN: prepend "http://" jika belum ada skema
- selectedProxy = selectedProxy.match(/^https?:\/\//)
-   ? selectedProxy
-   : `http://${selectedProxy}`;
-// —————————————————————————————————
- const agent = new HttpsProxyAgent(selectedProxy);
-
+      
+      let selectedProxy = ;
+      console.log("Menggunakan proxy: ", selectedProxy);
+      selectedProxy = selectedProxy.match(/^https?:\/\//)
+        ? selectedProxy
+        : `http://${selectedProxy}`;
+      
+      const agent = new HttpsProxyAgent(selectedProxy);
       accountAxiosConfig.httpAgent = agent;
       accountAxiosConfig.httpsAgent = agent;
     }
