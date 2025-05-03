@@ -117,7 +117,7 @@ async function main() {
   console.log(chalk.yellow('\n==================================='));
   console.log(chalk.yellowBright(`Creating ${count} Akun ..`));
   console.log(chalk.yellowBright('Note: Jangan Bar Barbar Bang '));
-  console.log(chalk.yellowBright('Saran: Kalau Mau BarBar, gunakan Proxy..'));
+  console.log(chalk.yellowBright('Saran: Kalau Mau BarBar,gunakan Proxy..'));
   console.log(chalk.yellow('=====================================\n'));
 
   const fileName = 'accounts.json';
@@ -200,7 +200,8 @@ async function main() {
 
     try {
       await axios.post('https://mscore.onrender.com/user', payload, accountAxiosConfig);
-      regSpinner.succeed(chalk.greenBright(' Berhasil mendaftarkan akun'));\n      successCount++;
+      regSpinner.succeed(chalk.greenBright(' Berhasil mendaftarkan akun'));
+      successCount++;
       accounts.push({ walletAddress, privateKey: wallet.privateKey });
       try {
         fs.writeFileSync(fileName, JSON.stringify(accounts, null, 2));
