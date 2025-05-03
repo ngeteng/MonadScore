@@ -19,7 +19,8 @@ cfonts.say('NT Exhaust', {
   align: 'center',
   colors: ['cyan', 'black'],
 });
-console.log(centerText("=== Telegram Channel 🚀 : NT Exhaust ( @NTExhaust ) ===\n", "blueBright"));
+
+console.log(centerText("=== Telegram Channel : NT Exhaust ( @NTExhaust ) ===\n", "blueBright"));
 console.log(chalk.yellow('============ Auto Registration Bot ===========\n'));
 
 function generateRandomHeaders() {
@@ -41,10 +42,8 @@ function generateRandomHeaders() {
     'Sec-Fetch-Mode': 'cors',
     'Sec-Fetch-Site': 'cross-site',
     'TE': 'trailers'
-
   };
 }
-
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -53,7 +52,7 @@ function delay(ms) {
 async function countdown(ms) {
   const seconds = Math.floor(ms / 1000);
   for (let i = seconds; i > 0; i--) {
-    process.stdout.write(chalk.grey(`\rMenunggu ${i} detik... `));
+    process.stdout.write(chalk.grey(`\rMenunggu ${i} detik...\n`));
     await delay(1000);
   }
   process.stdout.write('\r' + ' '.repeat(50) + '\r');
@@ -99,10 +98,7 @@ async function main() {
         message: 'Masukkan jumlah akun: ',
         validate: (value) => {
           const parsed = parseInt(value, 10);
-          if (isNaN(parsed) || parsed <= 0) {
-            return 'Harap masukkan angka yang valid lebih dari 0!';
-          }
-          return true;
+          return (!isNaN(parsed) && parsed > 0) || 'Harap masukkan angka yang valid lebih dari 0!';
         }
       }
     ]);
@@ -120,7 +116,7 @@ async function main() {
 
   console.log(chalk.yellow('\n==================================='));
   console.log(chalk.yellowBright(`Creating ${count} Akun ..`));
-  console.log(chalk.yellowBright('Note: Jangan Bar Barbar Bang 🗿'));
+  console.log(chalk.yellowBright('Note: Jangan Bar Barbar Bang '));
   console.log(chalk.yellowBright('Saran: Kalau Mau BarBar, gunakan Proxy..'));
   console.log(chalk.yellow('=====================================\n'));
 
@@ -157,28 +153,20 @@ async function main() {
           process.exit(1);
         }
       }
-      
-   let selectedProxy;
-   if (proxyMode === 'Rotating') {
-     selectedProxy = proxyList[0];
-   } else {
-     selectedProxy = proxyList.shift();
-     if (!selectedProxy) {
-       console.error(chalk.red("Tidak ada proxy yang tersisa untuk mode static."));
-       process.exit(1);
-     }
-   }
-      console.log("Menggunakan proxy: ", selectedProxy);
+
+      console.log('Menggunakan proxy:', selectedProxy);
+
+      // Jika proxy belum diawali "http://" atau "https://", tambahkan "http://"
       selectedProxy = selectedProxy.match(/^https?:\/\//)
         ? selectedProxy
         : `http://${selectedProxy}`;
-      
+
       const agent = new HttpsProxyAgent(selectedProxy);
       accountAxiosConfig.httpAgent = agent;
       accountAxiosConfig.httpsAgent = agent;
     }
-    
-   let ipifyAxiosConfig = {
+
+    let ipifyAxiosConfig = {
       timeout: 50000,
       headers: {
         'Accept': 'application/json, text/plain, */*',
@@ -188,49 +176,44 @@ async function main() {
       httpAgent: accountAxiosConfig.httpAgent,
       httpsAgent: accountAxiosConfig.httpsAgent
     };
-    
 
     let accountIP = '';
     try {
       const ipResponse = await axios.get('https://api.ipify.org?format=json', ipifyAxiosConfig);
-      const data = typeof ipResponse.data === 'string' ? JSON.parse(ipResponse.data) : ipResponse.data;
+      const data = typeof ipResponse.data === 'string'
+        ? JSON.parse(ipResponse.data)
+        : ipResponse.data;
       accountIP = data.ip;
     } catch (error) {
-     accountIP = "Gagal mendapatkan IP";
-     console.error("Error saat mendapatkan IP:", error.message);
-   }
-     console.log(chalk.white(`IP Yang Digunakan: ${accountIP}\n`))
+      accountIP = "Gagal mendapatkan IP";
+      console.error("Error saat mendapatkan IP:", error.message);
+    }
+
+    console.log(chalk.white(`IP Yang Digunakan: ${accountIP}\n`));
 
     const wallet = ethers.Wallet.createRandom();
     const walletAddress = wallet.address;
-    console.log(chalk.greenBright(`✔️  Wallet Ethereum berhasil dibuat: ${walletAddress}`));
+    console.log(chalk.greenBright(`✔️ Wallet Ethereum berhasil dibuat: ${walletAddress}`));
 
-    const payload = {
-      wallet: walletAddress,
-      invite: ref
-    };
-
+    const payload = { wallet: walletAddress, invite: ref };
     const regSpinner = ora('Mengirim data ke API...').start();
+
     try {
       await axios.post('https://mscore.onrender.com/user', payload, accountAxiosConfig);
-      regSpinner.succeed(chalk.greenBright('  Berhasil mendaftarkan akun'));
-      successCount++;
-
-      accounts.push({
-        walletAddress: walletAddress,
-        privateKey: wallet.privateKey
-      });
+      regSpinner.succeed(chalk.greenBright(' Berhasil mendaftarkan akun'));\n      successCount++;
+      accounts.push({ walletAddress, privateKey: wallet.privateKey });
       try {
         fs.writeFileSync(fileName, JSON.stringify(accounts, null, 2));
-        console.log(chalk.greenBright('✔️  Data akun berhasil disimpan ke accounts.json'));
+        console.log(chalk.greenBright('✔️ Data akun berhasil disimpan ke accounts.json'));
       } catch (err) {
-        console.error(chalk.red(`✖   Gagal menyimpan data ke ${fileName}: ${err.message}`));
+        console.error(chalk.red(`✖ Gagal menyimpan data ke ${fileName}: ${err.message}`));
       }
     } catch (error) {
-      regSpinner.fail(chalk.red(`✖   Gagal untuk ${walletAddress} : ${error.message}`));
+      regSpinner.fail(chalk.red(`✖ Gagal untuk ${walletAddress} : ${error.message}`));
       failCount++;
     }
-    console.log(chalk.yellow(`\nProgress: ${i + 1}/${count} akun telah diregistrasi. (Berhasil: ${successCount}, Gagal: ${failCount})`));
+
+    console.log(chalk.yellow(`\nProgress: ${i + 1}/${count} akun telah diregistrasi.\n(Berhasil: ${successCount}, Gagal: ${failCount})`));
     console.log(chalk.cyanBright('====================================================================\n'));
 
     if (i < count - 1) {
@@ -238,6 +221,7 @@ async function main() {
       await countdown(randomDelay);
     }
   }
+
   console.log(chalk.blueBright('\nRegistrasi selesai.'));
 }
 
